@@ -49,10 +49,14 @@ public class EmailRequest {
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Email email = (Email) o;
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null || getClass() != obj.getClass()) {
+                return false;
+            }
+            Email email = (Email) obj;
             return Objects.equals(id, email.id);
         }
 
