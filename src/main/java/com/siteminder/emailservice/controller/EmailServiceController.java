@@ -4,6 +4,7 @@ import com.siteminder.emailservice.model.EmailRequest;
 import com.siteminder.emailservice.model.EmailResponse;
 import com.siteminder.emailservice.service.QueueService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,7 +22,9 @@ public class EmailServiceController {
     @PostMapping(path = "/email")
     @ResponseBody
     public ResponseEntity<EmailResponse> sendEmail(@Valid @RequestBody EmailRequest req) {
-        return null;
+        service.sendMessage(req);
+        ResponseEntity<EmailResponse> responseEntity =
+                new ResponseEntity<EmailResponse>(HttpStatus.ACCEPTED);
+        return responseEntity;
     }
-
 }
