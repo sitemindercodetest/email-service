@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  email-service-app-container:
+    image: email-service-app:latest
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
