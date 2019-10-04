@@ -1,8 +1,10 @@
 package com.siteminder.emailservice.controller;
 
-import com.siteminder.emailservice.model.EmailRequest;
 import com.siteminder.emailservice.model.ApiErrorResponse;
+import com.siteminder.emailservice.model.EmailRequest;
 import com.siteminder.emailservice.service.QueueService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +21,12 @@ public class EmailServiceController {
     @Autowired
     private QueueService service;
 
+    Logger logger = LoggerFactory.getLogger(EmailServiceController.class);
+
     @PostMapping(path = "/email")
     @ResponseBody
     public ResponseEntity<ApiErrorResponse> addEmailToQueue(@Valid @RequestBody EmailRequest req) {
+        logger.info("Received email request - " + req.id);
         service.sendMessage(req);
         ResponseEntity<ApiErrorResponse> responseEntity =
                 new ResponseEntity<ApiErrorResponse>(HttpStatus.ACCEPTED);

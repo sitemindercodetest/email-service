@@ -1,6 +1,8 @@
 package com.siteminder.emailservice.controller.exception.handler;
 
 import com.siteminder.emailservice.model.ApiErrorResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +22,11 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class EmailServiceExceptionHandler extends ResponseEntityExceptionHandler {
 
-    private final String SHORT = "short";
-    private final String LONG = "long";
-    private final String INVALID_DATA = "Invalid data";
-    private final String MESSAGING_ERROR = "Not able to add email in queue to process, Try again";
+    private final String shortStr = "short";
+    private final String longStr = "long";
+    private final String invalidData = "Invalid data";
+    private final String messagingError = "Not able to add email in queue to process, Try again";
+    Logger logger = LoggerFactory.getLogger(EmailServiceExceptionHandler.class);
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
@@ -36,8 +39,8 @@ public class EmailServiceExceptionHandler extends ResponseEntityExceptionHandler
                 .stream()
                 .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage)));
         Map<String, String> message = new HashMap<>();
-        message.put(SHORT, INVALID_DATA);
-        message.put(LONG, ex.getMessage());
+        message.put(shortStr, invalidData);
+        message.put(longStr, ex.getMessage());
         ApiErrorResponse response
                 = new ApiErrorResponse(
                 status,
@@ -50,9 +53,10 @@ public class EmailServiceExceptionHandler extends ResponseEntityExceptionHandler
     public ResponseEntity<ApiErrorResponse> handleMessagingException(
             MessagingException ex,
             WebRequest request) {
+        logger.info("Error while pushing message to queue", request);
         Map<String, String> message = new HashMap<>();
-        message.put(SHORT, MESSAGING_ERROR);
-        message.put(LONG, ex.getMessage());
+        message.put(shortStr, messagingError);
+        message.put(longStr, ex.getMessage());
         ApiErrorResponse res = new ApiErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 message,
