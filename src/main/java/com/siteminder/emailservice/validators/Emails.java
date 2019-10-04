@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = EmailsValidator.class)
 @Documented
 public @interface Emails {
-    String message() default "must be valid email addresses";
+    String message() default "must be a valid array of email addresses";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

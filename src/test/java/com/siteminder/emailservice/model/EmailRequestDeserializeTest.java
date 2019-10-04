@@ -1,7 +1,9 @@
 package com.siteminder.emailservice.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.siteminder.emailservice.builders.EmailRequestBuilder;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -12,6 +14,12 @@ import static org.junit.Assert.assertThat;
 public class EmailRequestDeserializeTest {
     private final EmailRequest emailRequest = new EmailRequestBuilder().build();
     private final ObjectMapper mapper = new ObjectMapper();
+    private String jsonValue;
+
+    @Before
+    public void setUp() throws JsonProcessingException {
+        jsonValue = mapper.writeValueAsString(emailRequest);
+    }
 
     @Test
     public void Should_Deserialize_From() {

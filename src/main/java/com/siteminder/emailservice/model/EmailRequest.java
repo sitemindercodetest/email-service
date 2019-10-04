@@ -47,6 +47,14 @@ public class EmailRequest {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof EmailRequest)) return false;
+        EmailRequest that = (EmailRequest) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(from, to, cc, bcc, subject, body);
     }
