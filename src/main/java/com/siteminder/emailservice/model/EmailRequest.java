@@ -2,6 +2,7 @@ package com.siteminder.emailservice.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.siteminder.emailservice.validators.Emails;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -17,10 +18,14 @@ public class EmailRequest {
     public final String id;
 
     @NotEmpty
-    public final List<@Email String> to;
+    @Emails
+    public final List<String> to;
 
-    public final List<@Email String> cc;
-    public final List<@Email String> bcc;
+    @Emails
+    public final List<String> cc;
+
+    @Emails
+    public final List<String> bcc;
     public final String subject;
     public final String body;
 

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
@@ -19,7 +21,7 @@ public class EmailRequestSerializeTest {
     private EmailRequest emailRequest;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() throws IOException {
         emailRequest = mapper.readValue(json, EmailRequest.class);
     }
 
