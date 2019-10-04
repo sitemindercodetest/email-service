@@ -24,6 +24,14 @@ public class EmailRequestValidationTest {
     }
 
     @Test
+    public void Should_Be_Valid() {
+        EmailRequest validEmailRequest = builder.withFrom("t1@test.com").withTo(Arrays.asList("t2@test.com")).build();
+        Set<ConstraintViolation<EmailRequest>> errors = validator.validate(validEmailRequest);
+
+        assertEquals(errors.size(), 0);
+    }
+
+    @Test
     public void Should_Validate_FromIsNotEmpty() {
         EmailRequest invalidEmailRequest = builder.withFrom("").build();
         Set<ConstraintViolation<EmailRequest>> errors = validator.validate(invalidEmailRequest);

@@ -16,7 +16,7 @@ public class EmailsValidator implements ConstraintValidator<Emails, Collection<S
     @Override
     public boolean isValid(Collection<String> value, ConstraintValidatorContext context) {
         if (value == null) {
-            return false;
+            return true;
         }
         EmailValidator validator = new EmailValidator();
         for (String s : value) {
