@@ -1,5 +1,6 @@
 package com.siteminder.emailservice.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.siteminder.emailservice.model.ApiErrorResponse;
 import com.siteminder.emailservice.model.EmailRequest;
 import com.siteminder.emailservice.service.QueueService;
@@ -25,7 +26,8 @@ public class EmailServiceController {
 
     @PostMapping(path = "/email")
     @ResponseBody
-    public ResponseEntity<ApiErrorResponse> addEmailToQueue(@Valid @RequestBody EmailRequest req) {
+    public ResponseEntity<ApiErrorResponse> addEmailToQueue(@Valid @RequestBody EmailRequest req)
+            throws JsonProcessingException {
         logger.info("Received email request - " + req.id);
         service.sendMessage(req);
         ResponseEntity<ApiErrorResponse> responseEntity =

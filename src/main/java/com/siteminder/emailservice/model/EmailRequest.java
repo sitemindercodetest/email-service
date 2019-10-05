@@ -51,4 +51,21 @@ public class EmailRequest {
         this.body = body;
         this.sendAt = sendAt;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof EmailRequest)) {
+            return false;
+        }
+        EmailRequest that = (EmailRequest) obj;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(from, to, cc, bcc, subject, body, sendAt);
+    }
 }
