@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+
 @ControllerAdvice
 public class EmailServiceExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -26,7 +28,7 @@ public class EmailServiceExceptionHandler extends ResponseEntityExceptionHandler
     private final String longStr = "long";
     private final String invalidData = "Invalid data";
     private final String messagingError = "Not able to add email in queue to process, Try again";
-    Logger logger = LoggerFactory.getLogger(EmailServiceExceptionHandler.class);
+    private final Logger logger = LoggerFactory.getLogger(EmailServiceExceptionHandler.class);
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
@@ -41,11 +43,7 @@ public class EmailServiceExceptionHandler extends ResponseEntityExceptionHandler
         Map<String, String> message = new HashMap<>();
         message.put(shortStr, invalidData);
         message.put(longStr, ex.getMessage());
-        ApiErrorResponse response
-                = new ApiErrorResponse(
-                status,
-                message,
-                errors);
+        ApiErrorResponse response = new ApiErrorResponse(status, message, errors);
         return handleExceptionInternal(ex, response, headers, status, request);
     }
 
@@ -57,12 +55,8 @@ public class EmailServiceExceptionHandler extends ResponseEntityExceptionHandler
         Map<String, String> message = new HashMap<>();
         message.put(shortStr, messagingError);
         message.put(longStr, ex.getMessage());
-        ApiErrorResponse res = new ApiErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                message,
-                Optional.empty()
-        );
-        return new ResponseEntity<ApiErrorResponse>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+        ApiErrorResponse res = new ApiErrorResponse(INTERNAL_SERVER_ERROR, message,Optional.empty());
+        return new ResponseEntity<ApiErrorResponse>(res, INTERNAL_SERVER_ERROR);
     }
 
 }

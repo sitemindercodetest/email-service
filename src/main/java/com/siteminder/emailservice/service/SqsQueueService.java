@@ -24,7 +24,7 @@ public class SqsQueueService implements QueueService {
     @Value("${sqs.groupId}")
     private String groupId;
 
-    Logger logger = LoggerFactory.getLogger(SqsQueueService.class);
+    private final Logger logger = LoggerFactory.getLogger(SqsQueueService.class);
 
     @Autowired
     private QueueMessagingTemplate queueMessagingTemplate;

@@ -1,54 +1,59 @@
 package com.siteminder.emailservice.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.siteminder.emailservice.builders.EmailRequestBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 
 public class EmailRequestDeserializeTest {
-    private final EmailRequest emailRequest = new EmailRequestBuilder().build();
+    private final String json = String.format("{\"from\": \"t1@test.com\"," +
+            " \"to\": [\"t2@test.com\", \"t3@test.com\"]," +
+            " \"cc\": [\"t3@test.com\", \"t4@test.com\"]," +
+            "\"bcc\": [\"t5@test.com\", \"t6@test.com\"]," +
+            "\"subject\": \"subject of the email\"," +
+            "\"body\": \"subject of the body\"}");
     private final ObjectMapper mapper = new ObjectMapper();
-    private String jsonValue;
+    private EmailRequest emailRequest;
 
     @Before
-    public void setUp() throws JsonProcessingException {
-        jsonValue = mapper.writeValueAsString(emailRequest);
+    public void setUp() throws IOException {
+        emailRequest = mapper.readValue(json, EmailRequest.class);
     }
 
     @Test
     public void Should_Deserialize_From() {
-        assertThat("t1@test.com", equalTo(emailRequest.from));
+        assertThat(emailRequest.from, equalTo("t1@test.com"));
     }
 
     @Test
     public void Should_Deserialize_To() {
-        assertThat(Arrays.asList("t2@test.com", "t3@test.com"), equalTo(emailRequest.to));
+        assertThat(emailRequest.to, equalTo(Arrays.asList("t2@test.com", "t3@test.com")));
     }
 
     @Test
     public void Should_Deserialize_CC() {
-        assertThat(Arrays.asList("t3@test.com", "t4@test.com"), equalTo(emailRequest.cc));
+        assertThat(emailRequest.cc, equalTo(Arrays.asList("t3@test.com", "t4@test.com")));
     }
 
     @Test
     public void Should_Deserialize_BCC() {
-        assertThat(Arrays.asList("t5@test.com", "t6@test.com"), equalTo(emailRequest.bcc));
+        assertThat(emailRequest.bcc, equalTo(Arrays.asList("t5@test.com", "t6@test.com")));
     }
 
     @Test
     public void Should_Deserialize_Subject() {
-        assertThat("subject of the email", equalTo(emailRequest.subject));
+        assertThat(emailRequest.subject, equalTo("subject of the email"));
     }
 
     @Test
     public void Should_Deserialize_Body() {
-        assertThat("body of the email", equalTo(emailRequest.body));
+        assertThat(emailRequest.body, equalTo("subject of the body"));
     }
 
     @Test

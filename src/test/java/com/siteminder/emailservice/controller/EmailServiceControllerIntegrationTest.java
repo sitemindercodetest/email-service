@@ -69,5 +69,4 @@ public class EmailServiceControllerIntegrationTest {
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.message.short").value("Not able to add email in queue to process, Try again"));
     }
-
 }

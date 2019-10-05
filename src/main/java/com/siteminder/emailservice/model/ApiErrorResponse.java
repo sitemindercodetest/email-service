@@ -22,5 +22,4 @@ public class ApiErrorResponse {
         this.message = message;
         this.errors = errors;
     }
-
 }
