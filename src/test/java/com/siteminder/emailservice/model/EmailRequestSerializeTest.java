@@ -27,7 +27,7 @@ public class EmailRequestSerializeTest {
 
     @Test
     public void Should_Serialize_id() throws JsonProcessingException {
-        String idJsonValue = "\"id\":\""+ emailRequest.id +"\"";
+        String idJsonValue = "\"id\":" + emailRequest.id;
         assertThat(mapper.writeValueAsString(emailRequest), containsString(idJsonValue));
     }
 

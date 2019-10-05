@@ -8,6 +8,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -24,7 +25,7 @@ public class EmailRequestValidationTest {
     }
 
     @Test
-    public void Should_Be_Valid() {
+    public void Should_Be_Valid() throws ParseException {
         EmailRequest validEmailRequest = builder.withFrom("t1@test.com").withTo(Arrays.asList("t2@test.com")).build();
         Set<ConstraintViolation<EmailRequest>> errors = validator.validate(validEmailRequest);
 
@@ -77,5 +78,14 @@ public class EmailRequestValidationTest {
         Set<ConstraintViolation<EmailRequest>> errors = validator.validate(invalidEmailRequest);
 
         assertEquals(errors.size(), 1);
+    }
+
+    @Test
+    public void Should_Validate_SendAt() {
+        EmailRequest invalidEmailRequest = builder.withSendAt(0).build();
+        Set<ConstraintViolation<EmailRequest>> errors = validator.validate(invalidEmailRequest);
+
+        assertEquals(errors.size(), 1);
+        assertEquals(errors.iterator().next().getMessage(), "must provide valid sendAt");
     }
 }

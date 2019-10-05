@@ -3,6 +3,7 @@ package com.siteminder.emailservice.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.siteminder.emailservice.validators.Emails;
+import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -15,7 +16,7 @@ public class EmailRequest {
     @Email
     public final String from;
 
-    public final String id;
+    public final int id;
 
     @NotEmpty
     @Emails
@@ -29,6 +30,9 @@ public class EmailRequest {
     public final String subject;
     public final String body;
 
+    @Range(min = 1, message = "must provide valid sendAt")
+    public final long sendAt;
+
 
     @JsonCreator
     public EmailRequest(@JsonProperty("from") String from,
@@ -36,18 +40,15 @@ public class EmailRequest {
                         @JsonProperty("cc") List<String> cc,
                         @JsonProperty("bcc") List<String> bcc,
                         @JsonProperty("subject") String subject,
-                        @JsonProperty("body") String body) {
-        this.id = String.valueOf(this.hashCode());
+                        @JsonProperty("body") String body,
+                        @JsonProperty("sendAt") long sendAt) {
+        this.id = Objects.hash(from, to, cc, bcc, subject, body, sendAt);
         this.from = from;
         this.to = to;
         this.cc = cc;
         this.bcc = bcc;
         this.subject = subject;
         this.body = body;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(from, to, cc, bcc, subject, body);
+        this.sendAt = sendAt;
     }
 }

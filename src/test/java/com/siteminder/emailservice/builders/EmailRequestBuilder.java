@@ -13,8 +13,7 @@ public class EmailRequestBuilder {
     private List<String> bcc = Arrays.asList("t5@test.com", "t6@test.com");
     private String subject = "subject of the email";
     private String body = "body of the email";
-
-    public EmailRequestBuilder() {}
+    private long sendAt = 1570246978;
 
     public EmailRequestBuilder withFrom(String from) {
         this.from = from;
@@ -46,8 +45,13 @@ public class EmailRequestBuilder {
         return this;
     }
 
+    public EmailRequestBuilder withSendAt(long epochTime) {
+        this.sendAt = epochTime;
+        return this;
+    }
+
     public EmailRequest build(){
-        return new EmailRequest(from, to, cc, bcc, subject, body);
+        return new EmailRequest(from, to, cc, bcc, subject, body, sendAt);
     }
 
 }

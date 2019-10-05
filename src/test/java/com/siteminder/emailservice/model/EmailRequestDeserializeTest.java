@@ -9,7 +9,7 @@ import org.junit.Test;
 import java.util.Arrays;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class EmailRequestDeserializeTest {
     private final EmailRequest emailRequest = new EmailRequestBuilder().build();
@@ -49,5 +49,21 @@ public class EmailRequestDeserializeTest {
     @Test
     public void Should_Deserialize_Body() {
         assertThat("body of the email", equalTo(emailRequest.body));
+    }
+
+    @Test
+    public void Should_ID_MatchesIfSameAttributes() {
+        EmailRequest emailRequest = new EmailRequestBuilder().build();
+        EmailRequest emailRequestCopy = new EmailRequestBuilder().build();
+
+        assertEquals(emailRequest.id, emailRequestCopy.id);
+    }
+
+    @Test
+    public void Should_ID_DifferentIfAttributesDontMatch() {
+        EmailRequest emailRequest = new EmailRequestBuilder().build();
+        EmailRequest differEmailRequest = new EmailRequestBuilder().withFrom("asd@as.com").build();
+
+        assertNotEquals(emailRequest.id, differEmailRequest.id);
     }
 }
