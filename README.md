@@ -55,7 +55,7 @@ This app accepts the minimal necessary data required to send an email in JSON fo
 
 ### Endpoint
 
-- POST ```/email```
+- POST ```/api/v1/email```
     - Content-Type ```application/json```
     - Params 
     
@@ -93,7 +93,7 @@ This app accepts the minimal necessary data required to send an email in JSON fo
 
 ```sh
 curl -i --request POST \
---URL http://localhost:8080/email
+--URL http://localhost:8080/api/v1/email
 --header 'content-type: application/json'
 --data '<payload json>'
 ```
@@ -169,7 +169,7 @@ curl -i --request POST \
 ## TODO
 ### Operational
 - Add health-check endpoint
-- Versioning of the endpoint
+- ~~Versioning of the endpoint~~
 - Cloudformation stack with load balancer and auto scaling 
 - Add monitoring of the application 
     - Cloud watch alarm (For API and SQS)
