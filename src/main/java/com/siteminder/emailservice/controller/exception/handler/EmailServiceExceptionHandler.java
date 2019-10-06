@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.messaging.MessagingException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -45,6 +46,20 @@ public class EmailServiceExceptionHandler extends ResponseEntityExceptionHandler
         message.put(longStr, ex.getMessage());
         ApiErrorResponse response = new ApiErrorResponse(status, message, errors);
         return handleExceptionInternal(ex, response, headers, status, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex,
+            HttpHeaders headers,
+            HttpStatus status,
+            WebRequest request) {
+        Map<String, String> message = new HashMap<>();
+        message.put(shortStr, invalidData);
+        message.put(longStr, ex.getMessage());
+        ApiErrorResponse errorResponse = new ApiErrorResponse(status, message, Optional.empty());
+        return handleExceptionInternal(ex, errorResponse, headers, status, request);
+
     }
 
     @ExceptionHandler({ MessagingException.class })

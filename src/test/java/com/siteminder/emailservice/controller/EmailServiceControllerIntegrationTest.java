@@ -49,7 +49,7 @@ public class EmailServiceControllerIntegrationTest {
     }
 
     @Test
-    public void Should_AddEmailToQueue_Bad_Request() throws Exception {
+    public void Should_CustomErrorMsg_ForMissingData() throws Exception {
         String json = new ObjectMapper().writeValueAsString(builder.withFrom("").build());
 
         mvc.perform(post("/email")
@@ -60,7 +60,7 @@ public class EmailServiceControllerIntegrationTest {
     }
 
     @Test
-    public void Should_AddEmailToQueue_Messaging_Exception() throws Exception {
+    public void Should_CustomErrorMsg_MessagingException() throws Exception {
         String json = new ObjectMapper().writeValueAsString(builder.build());
         doThrow(new MessagingException("custom error")).when(service).sendMessage(any());
         mvc.perform(post("/email")
@@ -68,5 +68,16 @@ public class EmailServiceControllerIntegrationTest {
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.message.short").value("Not able to add email in queue to process, Try again"));
+    }
+
+    @Test
+    public void Should_CustomErrorMsg_InvalidData() throws Exception {
+        String json = "{invalidJson}";
+
+        mvc.perform(post("/email")
+                .content(json)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message.short").value("Invalid data"));
     }
 }
