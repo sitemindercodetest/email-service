@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.messaging.MessagingException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -76,6 +77,19 @@ public class EmailServiceExceptionHandler extends ResponseEntityExceptionHandler
         return handleExceptionInternal(ex, errorResponse, headers, status, request);
     }
 
+    @Override
+    protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(
+            HttpMediaTypeNotSupportedException ex,
+            HttpHeaders headers,
+            HttpStatus status,
+            WebRequest request) {
+        Map<String, String> message = new HashMap<>();
+        message.put(shortStr, notSupported);
+        message.put(longStr, ex.getMessage());
+        ApiErrorResponse errorResponse = new ApiErrorResponse(status, message, Optional.empty());
+        return handleExceptionInternal(ex, errorResponse, headers, status, request);
+    }
+
     @ExceptionHandler({ MessagingException.class })
     public ResponseEntity<ApiErrorResponse> handleMessagingException(
             MessagingException ex,
@@ -87,5 +101,4 @@ public class EmailServiceExceptionHandler extends ResponseEntityExceptionHandler
         ApiErrorResponse res = new ApiErrorResponse(INTERNAL_SERVER_ERROR, message,Optional.empty());
         return new ResponseEntity<ApiErrorResponse>(res, INTERNAL_SERVER_ERROR);
     }
-
 }

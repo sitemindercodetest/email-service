@@ -84,12 +84,23 @@ public class EmailServiceControllerIntegrationTest {
 
     @Test
     public void Should_CustomErrorMsg_InvalidMethod() throws Exception {
-        String json = "{invalidJson}";
+        String json = new ObjectMapper().writeValueAsString(builder.build());
 
         mvc.perform(get("/email")
                 .content(json)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
                 .andExpect(status().isMethodNotAllowed())
+                .andExpect(jsonPath("$.message.short").value("Not supported"));
+    }
+
+    @Test
+    public void Should_CustomErrorMsg_InvalidMediaType() throws Exception {
+        String json = new ObjectMapper().writeValueAsString(builder.build());
+
+        mvc.perform(post("/email")
+                .content(json)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN))
+                .andExpect(status().isUnsupportedMediaType())
                 .andExpect(jsonPath("$.message.short").value("Not supported"));
     }
 }
