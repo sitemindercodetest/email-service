@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.messaging.MessagingException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,6 +29,7 @@ public class EmailServiceExceptionHandler extends ResponseEntityExceptionHandler
     private final String shortStr = "short";
     private final String longStr = "long";
     private final String invalidData = "Invalid data";
+    private final String notSupported = "Not supported";
     private final String messagingError = "Not able to add email in queue to process, Try again";
     private final Logger logger = LoggerFactory.getLogger(EmailServiceExceptionHandler.class);
 
@@ -59,7 +61,19 @@ public class EmailServiceExceptionHandler extends ResponseEntityExceptionHandler
         message.put(longStr, ex.getMessage());
         ApiErrorResponse errorResponse = new ApiErrorResponse(status, message, Optional.empty());
         return handleExceptionInternal(ex, errorResponse, headers, status, request);
+    }
 
+    @Override
+    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(
+            HttpRequestMethodNotSupportedException ex,
+            HttpHeaders headers,
+            HttpStatus status,
+            WebRequest request) {
+        Map<String, String> message = new HashMap<>();
+        message.put(shortStr, notSupported);
+        message.put(longStr, ex.getMessage());
+        ApiErrorResponse errorResponse = new ApiErrorResponse(status, message, Optional.empty());
+        return handleExceptionInternal(ex, errorResponse, headers, status, request);
     }
 
     @ExceptionHandler({ MessagingException.class })

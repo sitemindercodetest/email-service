@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -79,5 +80,16 @@ public class EmailServiceControllerIntegrationTest {
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message.short").value("Invalid data"));
+    }
+
+    @Test
+    public void Should_CustomErrorMsg_InvalidMethod() throws Exception {
+        String json = "{invalidJson}";
+
+        mvc.perform(get("/email")
+                .content(json)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(jsonPath("$.message.short").value("Not supported"));
     }
 }
