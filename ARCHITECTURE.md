@@ -1,31 +1,29 @@
-# Email service architecture
+git add remote https://ashoksiteminder@bitbucket.org/ashoksiteminder/email-service.git# Email service architecture
 
 __Table of Contents__
 
-- [High level components](#high_level_components)
+- [High level components](#high-level-components)
 
-- [High level architectural considerations](#high_level_architectural_considerations)
-    - [Avoid data loss / Reliability](#avoid_data_loss_/_reliability)
+- [High level architectural considerations](#high-level-architectural-considerations)
+    - [Avoid data loss - Reliability](#avoid-data-loss---reliability)
     - [Scalability](#scalability)
-    - [Operational excellence](#operational_excellence)
+    - [Operational excellence](#operational-excellence)
     - [Security](#security)
-    - [Cost effective](#cost_effective)
-  - [API Details](#api-details)
-    - [Endpoint](#endpoint)
-    - [Example](#example)
-      - [Params](#params)
-      - [CURL command](#curl-command)
-      - [Response](#response)
+    - [Cost effective](#cost-effective)
 
-- [Development](#development)
-  - [Notes](#notes)
-  - [TODO](#todo)
-    - [Operational](#operational)
-    - [Features](#features)
+- [Limitations of the architecture](#limitations-of-the-architecture)
 
-
-
-
+- [Other options considered](#other-options-considered)
+    - [Email Service API - SQS - Lambda](#email-service-api---sqs---lambda)
+    - [API Gateway - Lambda](#api-gateway---lambda)
+    
+- [Diagrams](#diagrams)
+    - [Current architecture](#current-architecture)
+    - [System overview](#system-overview)
+    - [Email service components](#email-service-components)
+    - [Email service worker components](#email-service-worker-components)
+    
+    
 # High level components
 
 - Email Service API
@@ -34,7 +32,7 @@ __Table of Contents__
 
 # High level architectural considerations
 
-## Avoid data loss / Reliability
+## Avoid data loss - Reliability
 In the above architecture the data loss is avoided by storing the message in SQS queue before processing it by the email providers. The durability of the messages are same as the durability of SQS, which persists the data in Multi AZ and highly durable (I am not able to find the exact 9's for durability in AWS doc). On other scenarios of data loss during network transfer like while communicating from the email-service-api to SQS the end user won't get the 202 response which can be used to re-send the message to the API by the consumer.  
       
 ## Scalability
@@ -52,14 +50,47 @@ To prevent message getting into logs.
 ## Cost effective
 As the systems both API and worker can be configured as auto scalable, the cost is directly linked to the amount of traffic that the system is going to handle.
 
- 
+# Limitations of the architecture
+- Limit of the SQS message size is 256KB
+- FIFO queues default limit is 300 req/sec (Write, Read and Delete), need to raise limit request or consider other alternative approach like Queue pooling [architecture](/images/scaled-version.png)
 
+# Other options considered
+
+## Email Service API - SQS - Lambda
+- Email Service API to standard SQS and then configure lambda trigger from SQS which will act as worker
+    - Pros
+        - Highly scalable (Higher limit to SQS)
+        - Lambdas are triggered and automatically and process the messages from the queue.
+        - Cost effective       
+    - Cons
+        - Standard queue can produce duplicate messages, which might be an issue (Can discuss with business as this is a rare case scenario)
+        - Log aggregation from lambdas            
+         
+## API Gateway - Lambda
+- API gateway as (email-service) to SQS and then lambda (worker)
+    - Pros
+        - Serverless
+        - Ease of scalability
+    - Cons
+        - Data loss
+        - Feedback to consumers form the API
+
+
+# Diagrams
+
+## Current architecture 
 
 ![Current Architecure](/images/current-version.png)
 
+## System overview
+
 ![System overview](/images/c2.png)
 
+## Email service components
+
 ![Email Service](/images/email-service-api.png)
+
+## Email service worker components
 
 ![Email Service Worker](/images/email-service-worker.png)
  
