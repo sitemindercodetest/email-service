@@ -171,6 +171,9 @@ curl -i --request POST \
 
 
 ## TODO
+### Refactor
+- Rename this application to email-service-api
+
 ### Operational
 - Add health-check endpoint
 - ~~Versioning of the endpoint~~
@@ -185,4 +188,5 @@ curl -i --request POST \
 - Support name of the person in from, to, cc,bcc
 - Support email headers
 - Go through all other possible error scenario and provide custom error message if required
+- Change the FIFO SQS to have dead letter queue to push the messages that fail more than n times. 
 - Discuss with product owner about supporting other features like HTML/Attachment and others.
