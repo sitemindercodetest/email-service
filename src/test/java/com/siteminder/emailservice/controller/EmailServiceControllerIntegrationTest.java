@@ -30,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 public class EmailServiceControllerIntegrationTest {
 
+    private final String apiEndpoint = "/api/v1/email";
     @Autowired
     private MockMvc mvc;
 
@@ -43,7 +44,7 @@ public class EmailServiceControllerIntegrationTest {
     public void Should_AddEmailToQueue_Success() throws Exception {
         String json = new ObjectMapper().writeValueAsString(builder.build());
 
-        mvc.perform(post("/email")
+        mvc.perform(post(apiEndpoint)
                 .content(json)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
                 .andExpect(status().isAccepted());
@@ -53,7 +54,7 @@ public class EmailServiceControllerIntegrationTest {
     public void Should_CustomErrorMsg_ForMissingData() throws Exception {
         String json = new ObjectMapper().writeValueAsString(builder.withFrom("").build());
 
-        mvc.perform(post("/email")
+        mvc.perform(post(apiEndpoint)
                 .content(json)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -64,7 +65,7 @@ public class EmailServiceControllerIntegrationTest {
     public void Should_CustomErrorMsg_MessagingException() throws Exception {
         String json = new ObjectMapper().writeValueAsString(builder.build());
         doThrow(new MessagingException("custom error")).when(service).sendMessage(any());
-        mvc.perform(post("/email")
+        mvc.perform(post(apiEndpoint)
                 .content(json)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
@@ -75,7 +76,7 @@ public class EmailServiceControllerIntegrationTest {
     public void Should_CustomErrorMsg_InvalidData() throws Exception {
         String json = "{invalidJson}";
 
-        mvc.perform(post("/email")
+        mvc.perform(post(apiEndpoint)
                 .content(json)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -86,7 +87,7 @@ public class EmailServiceControllerIntegrationTest {
     public void Should_CustomErrorMsg_InvalidMethod() throws Exception {
         String json = new ObjectMapper().writeValueAsString(builder.build());
 
-        mvc.perform(get("/email")
+        mvc.perform(get(apiEndpoint)
                 .content(json)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
                 .andExpect(status().isMethodNotAllowed())
@@ -97,7 +98,7 @@ public class EmailServiceControllerIntegrationTest {
     public void Should_CustomErrorMsg_InvalidMediaType() throws Exception {
         String json = new ObjectMapper().writeValueAsString(builder.build());
 
-        mvc.perform(post("/email")
+        mvc.perform(post(apiEndpoint)
                 .content(json)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN))
                 .andExpect(status().isUnsupportedMediaType())
