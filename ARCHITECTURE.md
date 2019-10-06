@@ -1,4 +1,3 @@
-git add remote https://ashoksiteminder@bitbucket.org/ashoksiteminder/email-service.git# Email service architecture
 
 __Table of Contents__
 
@@ -33,26 +32,25 @@ __Table of Contents__
 # High level architectural considerations
 
 ## Avoid data loss - Reliability
-In the above architecture the data loss is avoided by storing the message in SQS queue before processing it by the email providers. The durability of the messages are same as the durability of SQS, which persists the data in Multi AZ and highly durable (I am not able to find the exact 9's for durability in AWS doc). On other scenarios of data loss during network transfer like while communicating from the email-service-api to SQS the end user won't get the 202 response which can be used to re-send the message to the API by the consumer.  
+In this architecture the data loss is avoided by storing the message in SQS queue as soon as the message is received. The durability of the messages are same as the durability of SQS, which persists the data in Multi AZ and highly durable (I am not able to find the exact 9's for durability in AWS doc). The other scenarios in which data loss might occur during network transfer like while communicating from the email-service-api to SQS the end user will get 500 as response which can be used to re-send the message to the API by the consumer. Also both email-service-api and email-service-worker should be deployed multi AZ which will ensure the high availability of the system.  
       
 ## Scalability
-The API servers are behind the load-balancer and auto-scaling, which makes sure the traffic is spread across multiple instances of API server. The FIFO SQS can handle 300 write request per second, if we hit the limit then we can raise a limit increase request. We can also have more than one listener application consuming the messages from FIFO SQS queue which provides this can be auto scaled based on the cloud watch alarm of 'ApproximateAgeOfOldestMessage' in the queue.       
+The API servers are behind the load-balancer and auto-scalable, which makes sure the traffic is spread across multiple instances of API server. The FIFO SQS can handle 300 write request per second, if we hit the limit then we can raise a limit increase request. We can also have more than one listener application consuming the messages from FIFO SQS queue which provides this can be auto scaled based on the cloud watch alarm of 'ApproximateAgeOfOldestMessage' in the queue.       
 
 ## Operational excellence
-As the architecture is decoupled as consumer(API) and processor(worker) they can be scaled individually based on cloud watch metrics, which will enable the systems to scale independently. Also as they are decoupled the deployed/changes to the systems can be happen without affecting one another.    
+As the architecture is decoupled as consumer(API) and processor(worker) they can be scaled individually based on cloud watch metrics, this enables the systems to scale independently. Also as they are decoupled the deployed/changes to the systems can be happen without affecting one another. This enables monitoring the systems using different metrics, which gives more insight to the systems.     
 
 ## Security
-As these messages might contain PII data, we need to make sure that these messages are highly secured. We can use the SSE (server side encryption) in the SQS queue (for this exercise they are not encrypted) to protect the messages. Also from the development team perspective we need to make sure that none of the PII data/messages are being logged in the logs. For tracking purpose the unique ID of the messages can be used.
-To prevent message getting into logs.
-- At code review stage, we need to make sure that the PII data in the messages are not being logged.
-- At the testing/qa stage need to ensure that the PII data is not being logged in the logs in both API and worker.  
+As these messages might contain PII data, we need to make sure that these messages are highly secured. We should use the SSE (server side encryption) in the SQS queue while the data is at rest and SSL/TLS while the data is in transit (for this exercise they are not encrypted) to protect the messages. For tracking purpose the unique ID of the messages can be used.
+We should also make sure that the PII data is not being logged in log messages, if the are logged we need to ensure that the logs are being secured and doesn't go outside the organization.  
 
 ## Cost effective
-As the systems both API and worker can be configured as auto scalable, the cost is directly linked to the amount of traffic that the system is going to handle.
+As the systems both API and worker can be configured as auto scalable, we can maintain the minimum required resource all the time. And can leverage spot instance for auto scaling. This enables the cost of the infrastructure is directly proportional to the amount traffic to the system.  
 
 # Limitations of the architecture
-- Limit of the SQS message size is 256KB
-- FIFO queues default limit is 300 req/sec (Write, Read and Delete), need to raise limit request or consider other alternative approach like Queue pooling [architecture](/images/scaled-version.png)
+- Limit of the SQS message size is 256KB, emails having more than 256KB we might need to put them in s3 using this (https://github.com/awslabs/amazon-sqs-java-extended-client-lib)
+- FIFO queues default limit is 300 req/sec (Write, Read and Delete), need to raise limit request or consider other alternative approach like Queue pooling [architecture](/images/scaled-version.png). The reason for choosing FIFO queue instead of standard queue is to avoid duplication. In strandad queue there could be duplication of messages in rare scenarios.
+- Not able to connect leverage serveless architecture using lambda's. (AWS doesn't support lambda's trigger for FIFO queues).
 
 # Other options considered
 

@@ -1,7 +1,6 @@
 # Email service
 
-Create a service that accepts the necessary information of an email.
-
+For architectural details please refer this [ARCHITECTURE.md](/ARCHITECTURE.md)
 
 __Table of Contents__
 
@@ -34,7 +33,7 @@ This app accepts the minimal necessary data required to send an email in JSON fo
 - Requires Java 1.8 
 - Requires mvn 
 - Require aws-cli (Instructions - https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
-- Requires ASW SQS - (Script provided create_sqs.sh)
+- Requires ASW SQS - (Run the script provided create_sqs.sh to create the queue)
 - Docker (Optional) - (https://docs.docker.com/install/)
 - Docker-compose (Optional) - (https://docs.docker.com/compose/install/)
 
@@ -76,7 +75,7 @@ This app accepts the minimal necessary data required to send an email in JSON fo
 ### Params
 ```json
 { 
-   "from":"asdtest123@gmail.com",
+   "from":"asdtest@mailinator.com",
    "to":[ 
       "asdtest123@mailinator.com",
       "asdtest456@mailinator.com"
@@ -163,9 +162,8 @@ curl -i --request POST \
 
 # Development
 
-## Notes
+## Commands
 - To run test `mvn test`
-- To build `mvn build`
 - To run checkstyle `mvn verify`
 - To package `mvn package`
 
@@ -175,9 +173,10 @@ curl -i --request POST \
 - Rename this application to email-service-api
 
 ### Operational
+- Set up CI/CD
 - Add health-check endpoint
 - ~~Versioning of the endpoint~~
-- Cloudformation stack with load balancer and auto scaling 
+- Cloudformation stack with load balancer and auto scaling / Deploy them as containter clusters (Kubernets, Helm)
 - Add monitoring of the application 
     - Cloud watch alarm (For API and SQS)
     - On-call Support for agreed SLA (pagerduty or others)
@@ -187,6 +186,6 @@ curl -i --request POST \
 ### Features
 - Support name of the person in from, to, cc,bcc
 - Support email headers
-- Go through all other possible error scenario and provide custom error message if required
-- Change the FIFO SQS to have dead letter queue to push the messages that fail more than n times. 
+- Go through all other possible error scenarios and provide custom error message if required
+- ~~Change the FIFO SQS to have dead letter queue to push the messages that fail more than n times.~~ (Manually configure a dead letter queue) 
 - Discuss with product owner about supporting other features like HTML/Attachment and others.
