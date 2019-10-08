@@ -19,7 +19,7 @@ __Table of Contents__
       - [Response](#response)
 
 - [Development](#development)
-  - [Notes](#notes)
+  - [Commands](#commands)
   - [TODO](#todo)
     - [Operational](#operational)
     - [Features](#features)
@@ -166,6 +166,7 @@ curl -i --request POST \
 - To run test `mvn test`
 - To run checkstyle `mvn verify`
 - To package `mvn package`
+- To run `mvn spring-boot:run`
 
 
 ## TODO
