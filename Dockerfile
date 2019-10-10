@@ -1,4 +1,4 @@
-FROM openjdk:8
+FROM openjdk:12
 VOLUME /tmp
 ADD target/email-service-0.0.1-SNAPSHOT.jar email-service-0.0.1-SNAPSHOT.jar
 EXPOSE 8080

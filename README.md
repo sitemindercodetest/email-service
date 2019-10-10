@@ -30,7 +30,7 @@ This app accepts the minimal necessary data required to send an email in JSON fo
 
 # Documentation
 ## Install
-- Requires Java 1.8 
+- Requires Java 1.12 
 - Requires mvn 
 - Require aws-cli (Instructions - https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
 - Requires ASW SQS - (Run the script provided create_sqs.sh to create the queue)
